@@ -10,6 +10,9 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
+import java.lang.Exception
+import kotlin.reflect.typeOf
 
 class MainActivity : AppCompatActivity() {
 
@@ -19,7 +22,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // store the created list and the hashmap for the indices of the boxes
+        // store the created list and the hash map for the indices of the boxes
         idList = createIdList()
 
         // add a click listener to the submit button
@@ -108,16 +111,6 @@ class MainActivity : AppCompatActivity() {
     // function that returns the id with the specific index
     private fun getId(int: Int) : Int = idList[int]
 
-    // function to obtain the index position of the box that is clicked
-    private fun getIndex(view: View):Int{
-        for(index in 0..24){
-            if(idList[index]==view.id){
-                return index
-            }
-        }
-        return -1
-    }
-
     // function to set the listeners for the boxes
     private fun setListeners() {
         for(index in (0..24)){
@@ -127,15 +120,34 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // function to change the color of the boxes
-    private fun changeColor(view: View) {
-        // get position
-        val index:Int = getIndex(view)
-
+    // function that changes the color of the box
+    private fun flipColor(view: View){
+        // obtain the bg color then flip its bg color
         val color:Int = (view.background as ColorDrawable).color
-
         if(color == Color.DKGRAY) view.setBackgroundColor(Color.rgb(255,211,0))
         else view.setBackgroundColor(Color.DKGRAY)
+    }
 
+    // function to change the color of the boxes
+    private fun changeColor(view: View) {
+        // get the layout parameters of the clicked box
+        val params = view.layoutParams as ConstraintLayout.LayoutParams
+
+        // check if the id in the constraint of the clicked box is in the list of id's then change its color
+        if(params.startToEnd in idList){
+            flipColor(findViewById<TextView>(params.startToEnd))
+        }
+        if(params.endToStart in idList){
+            flipColor(findViewById<TextView>(params.endToStart))
+        }
+        if(params.topToBottom in idList){
+            flipColor(findViewById<TextView>(params.topToBottom))
+        }
+        if(params.bottomToTop in idList){
+            flipColor(findViewById<TextView>(params.bottomToTop))
+        }
+
+        // change the color of the clicked box
+        flipColor(view)
     }
 }
